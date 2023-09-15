@@ -43,9 +43,8 @@ def call():
 if os.path.exists("/proc/" + open("pid.txt").read().strip()):
     data = st.columns(2)
     if data[0].button("Stop Server"):
-        os.system('pkill -f runtime.py')
+        requests.post('http://localhost:5000/command', json={'command': "stop"})
         os.system('kill ' + open("pid.txt").read().strip())
-        time.sleep(1)
         st.experimental_rerun()
     players = data[1].empty()
     log = st.empty()
@@ -59,7 +58,7 @@ else:
     data = st.columns(2)
     if data[0].button("Start Server"):
         subprocess.Popen("python3 runtime.py", shell=True)
-        time.sleep(2)
+        time.sleep(0.5)
         st.experimental_rerun()
     players = data[1].empty()
     log = st.empty()

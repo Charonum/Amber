@@ -5,8 +5,9 @@ import tempfile
 import time
 import atexit
 from flask import Flask, request, make_response
+from contextlib import contextmanager
 
-ram_alloc = "1"
+ram_alloc = open("amber-cfg.txt", "r").read().strip().replace("ram: ", "")
 f = tempfile.TemporaryFile()
 
 server = subprocess.Popen(
@@ -23,6 +24,7 @@ presence = open("pid.txt", "w")
 presence.write(str(os.getpid()))
 presence.close()
 
+
 def stop_server(now=True):
     if now:
         server.stdin.write('stop' + '\n')
@@ -32,7 +34,7 @@ def stop_server(now=True):
     else:
         server.stdin.write('say The server is shutting down in 5 minutes!' + '\n')
         server.stdin.flush()
-        time.sleep(500)
+        time.sleep(300)
         server.stdin.write('stop' + '\n')
         server.stdin.flush()
         server.kill()
@@ -43,13 +45,20 @@ atexit.register(stop_server)
 
 app = Flask(__name__)
 
+
 @app.route('/command', methods=['POST'])
 def command():
     data = request.json
-
     server.stdin.write(data['command'] + '\n')
     server.stdin.flush()
-    return "", 200
+    if data['command'] == "stop":
+        try:
+            return "", 200
+        finally:
+            server.kill()
+            f.close()
+    else:
+        return "", 200
 
 
 @app.route("/log", methods=['GET'])
