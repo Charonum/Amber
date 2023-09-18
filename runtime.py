@@ -57,17 +57,25 @@ def command():
         finally:
             server.kill()
             f.close()
+            sys.exit(0)
     else:
         return "", 200
 
 
 @app.route("/log", methods=['GET'])
 def log():
-    f.seek(0)
-    log_lines = f.read().decode('utf-8')
-    response = make_response(log_lines, 200)
-    response.mimetype = "text/plain"
-    return response
+    try:
+        f.seek(0)
+        log_lines = f.read().decode('utf-8')
+        response = make_response(log_lines, 200)
+        response.mimetype = "text/plain"
+        return response
+    except:
+        f.close()
+        server.stdin.write("stop\n")
+        server.stdin.flush()
+        server.wait()
+        return "", 200
 
 
 app.run(port=5000)
