@@ -29,7 +29,12 @@ def start():
 
 def call():
     if os.path.exists("/proc/" + open("pid.txt").read().strip()):
-        response = requests.get('http://localhost:5000/log')
+        try:
+            response = requests.get('http://localhost:5000/log')
+        except:
+            os.system("kill " + open("pid.txt").read().strip())
+            time.sleep(0.5)
+            st.expiremental_rerun()
         if response.status_code == 200:
             log_text = response.content.decode("utf-8").splitlines()
             full_log = open("log.txt", "w")
