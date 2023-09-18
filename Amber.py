@@ -34,7 +34,7 @@ def call():
         except:
             os.system("kill " + open("pid.txt").read().strip())
             time.sleep(0.5)
-            st.expiremental_rerun()
+            st.experimental_rerun()
         if response.status_code == 200:
             log_text = response.content.decode("utf-8").splitlines()
             full_log = open("log.txt", "w")
