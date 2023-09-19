@@ -29,12 +29,7 @@ def start():
 
 def call():
     if os.path.exists("/proc/" + open("pid.txt").read().strip()):
-        try:
-            response = requests.get('http://localhost:5000/log')
-        except:
-            os.system("kill " + open("pid.txt").read().strip())
-            time.sleep(0.5)
-            st.expiremental_rerun()
+        response = requests.get('http://localhost:5000/log')
         if response.status_code == 200:
             log_text = response.content.decode("utf-8").splitlines()
             full_log = open("log.txt", "w")
@@ -48,8 +43,12 @@ def call():
 if os.path.exists("/proc/" + open("pid.txt").read().strip()):
     data = st.columns(2)
     if data[0].button("Stop Server"):
-        requests.post('http://localhost:5000/command', json={'command': "stop"})
-        os.system('kill ' + open("pid.txt").read().strip())
+        try:
+            requests.post('http://localhost:5000/command', json={'command': "stop"})
+        except:
+            pass
+        os.kill(int(open("pid.txt").read().strip()), os.WSTOPPED)
+        time.sleep(0.4)
         st.experimental_rerun()
     players = data[1].empty()
     log = st.empty()

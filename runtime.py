@@ -27,7 +27,11 @@ presence.close()
 
 def stop_server(now=True):
     if now:
-        server.stdin.write('stop' + '\n')
+        try:
+            server.stdin.write('stop' + '\n')
+        except:
+            # useless error
+            pass
         server.stdin.flush()
         server.kill()
         f.close()
@@ -55,15 +59,21 @@ def command():
         try:
             return "", 200
         finally:
-            server.kill()
+            server.wait()
             f.close()
+            sys.exit(0)
     else:
         return "", 200
 
 
 @app.route("/log", methods=['GET'])
 def log():
-    f.seek(0)
+    try:
+        f.seek(0)
+    except:
+        exit()
+        # just in case exit() does not work
+        sys.exit(0)
     log_lines = f.read().decode('utf-8')
     response = make_response(log_lines, 200)
     response.mimetype = "text/plain"
