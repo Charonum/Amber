@@ -9,4 +9,4 @@ Amber is a lightweight self-hosting application written in python. It allows you
 # Webhooks
 **WEBHOOKS ONLY WORK IF THE MC SERVER IS ONLINE**
 1. Log: localhost:5000/log
-2. Command: localhost:500/command `to send a command, post {"command": "your command here"}`
+2. Command: localhost:5000/command `to send a command, post {"command": "your command here"}`
