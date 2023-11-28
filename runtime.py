@@ -20,9 +20,8 @@ server = subprocess.Popen(
     universal_newlines=True,
 )
 
-presence = open("pid.txt", "w")
-presence.write(str(os.getpid()))
-presence.close()
+with open("pid.txt", "w") as presence:
+    presence.write(str(os.getpid()))
 
 
 def stop_server(now=True):
